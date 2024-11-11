@@ -4,13 +4,23 @@ min_val = 0
 suma = 0
 numeros = []
 
-# Se pide el número de números enteros a ingresar y se castea a entero
-n = int(input("Ingrese cuantos números enteros quiere comparar: "))
+# Intentamos solicitar el número de números enteros a ingresar
+while True:
+    try:
+        n = int(input("Ingrese cuantos números enteros quiere comparar: "))
+        break  # Si se ingresó un valor válido, salimos del ciclo
+    except ValueError:
+        print("Error: Debe ingresar un número entero válido.")
 
 # Se inicia un ciclo para recolectar los números solicitados y agregarlos a la lista "numeros"
 for x in range(n):
-    num = int(input(f"Ingrese el numero #{x + 1}: "))
-    numeros.append(num)
+    while True:
+        try:
+            num = int(input(f"Ingrese el numero #{x + 1}: "))
+            numeros.append(num)
+            break  # Si el número es válido, salimos del ciclo
+        except ValueError:
+            print("Error: Debe ingresar un número entero válido.")
 
 # Inicializa max y min al primer valor de la lista
 max_val = numeros[0]
