@@ -1,3 +1,5 @@
+from fecha import *
+from direccion import *
 class Usuario:
     #Atributos
 
