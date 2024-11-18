@@ -11,3 +11,26 @@ class Usuario:
         self.__tel = tel
         self.__email = email
         self.__dir = dir
+
+    #Setters
+
+    def setNombre(self, nombre: str):
+        self.__nombre = nombre
+
+    def setId(self, id: int):
+        self.__id = id
+
+    def setFecha_nacimiento(self, fecha: Fecha):
+        self.__fecha_nacimiento = fecha
+
+    def setCiudad_nacimiento(self, ciudad: str):
+        self.__ciudad_nacimiento = ciudad
+
+    def setTel(self, tel: int):
+        self.__tel = tel
+
+    def setEmail(self, email: str):
+        self.__email = email
+
+    def setDir(self, dir: Direccion):
+        self.__dir = dir
