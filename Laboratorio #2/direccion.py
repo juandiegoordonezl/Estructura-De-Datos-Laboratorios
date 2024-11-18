@@ -1,6 +1,6 @@
 class Direccion:
     #Atributos
-    def __init__(self,calle=None,nomenclatura=None,barrio=None,ciudad=None,edificio=None,apto=None):      
+    def __init__(self,calle="No tiene una direccion registrada",nomenclatura="",barrio="",ciudad="",edificio="",apto=""):      
         self.__calle = calle
         self.__nomenclatura = nomenclatura
         self.__barrio = barrio
@@ -9,45 +9,42 @@ class Direccion:
         self.__apto = apto
         
     # Getters y Setters
-    def get__Calle(self):
+    def getCalle(self):
         return self.__calle
 
-    def set__Calle(self, calle):
+    def setCalle(self, calle):
         self.__calle = calle
         
-    def get_Ciudad(self):
+    def getCiudad(self):
         return self.__ciudad
 
-    def set_Ciudad(self, ciudad):
+    def setCiudad(self, ciudad):
         self.__ciudad = ciudad
         
-    def get_Nomenclatura(self):
+    def getNomenclatura(self):
         return self.__nomenclatura
 
-    def set_Nomenclatura(self, nomenclatura):
+    def setNomenclatura(self, nomenclatura):
         self.__nomenclatura = nomenclatura
     
-    def get_Edificio(self):
+    def getEdificio(self):
         return self.__edificio
 
-    def set_Edificio(self, edificio):
+    def setEdificio(self, edificio):
         self.__edificio = edificio
     
-    def get_Barrio(self):
+    def getBarrio(self):
         return self.__barrio
 
-    def set_Barrio(self, barrio):
+    def setBarrio(self, barrio):
         self.__barrio = barrio
         
-    def get_Apto(self):
+    def getApto(self):
         return self.__apto
 
-    def set_Apto(self, apto):
+    def setApto(self, apto):
         self.__apto= apto
-
+        
+    #Metodo toString()
     def __str__(self): 
-        return self.__calle+" "+self.__nomenclatura+" "+self.__barrio+" "+self.__ciudad+" "+self.__edificio+" Apartamento "+self.__apto
-    
-if __name__ == "__main__":
-    direccion1 = Direccion("Calle 54A","30-01","Boston","Medellín","Edificio Central","101")
-    print(direccion1)
+        return self.__calle+" "+self.__nomenclatura+" "+self.__barrio+" "+self.__ciudad+" "+self.__edificio+" "+self.__apto

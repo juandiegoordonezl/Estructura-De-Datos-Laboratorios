@@ -1,5 +1,6 @@
 from fecha import *
 from direccion import *
+
 class Usuario:
     #Atributos
 
@@ -36,3 +37,30 @@ class Usuario:
 
     def setDir(self, dir: Direccion):
         self.__dir = dir
+        
+    #getters
+    def getNombre(self):
+        return self.__nombre
+
+    def getId(self):
+        return self.__id
+
+    def getFecha_nacimiento(self):
+        return self.__fecha_nacimiento
+
+    def getCiudad_nacimiento(self):
+        return self.__ciudad_nacimiento
+
+    def getTel(self):
+        return self.__tel
+
+    def getEmail(self):
+        return self.__email
+
+    def getDir(self):
+        return self.__dir
+    
+    #Metodo toString()
+    def __str__(self): 
+        return "Nombre: "+self.__nombre+"Id: "+self.__id+"Fecha de nacimiento: "+self.__fecha_nacimiento+"Ciudad de nacimento: "+self.__ciudad_nacimiento+"Tel: "+ self.__tel+"Email: "+self.__email+"Direccion: "+ print(self.__dir)
+
