@@ -45,5 +45,9 @@ class Direccion:
     def set_Apto(self, apto):
         self.__apto= apto
 
-    def __str__(self):
-        return self.__calle+self.__nomenclatura+self.__barrio+self.__ciudad+self.__edificio+self.__apto
+    def __str__(self): 
+        return self.__calle+" "+self.__nomenclatura+" "+self.__barrio+" "+self.__ciudad+" "+self.__edificio+" Apartamento "+self.__apto
+    
+if __name__ == "__main__":
+    direccion1 = Direccion("Calle 54A","30-01","Boston","Medellín","Edificio Central","101")
+    print(direccion1)
