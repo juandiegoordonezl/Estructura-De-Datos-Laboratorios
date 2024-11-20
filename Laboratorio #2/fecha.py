@@ -16,12 +16,13 @@ class Fecha:
     def set_A(self, aa):
         self.__aa = aa
     
+    @property
     def get_Dia(self):
         return self.__dd
-    
+    @property
     def get_Mes(self):
         return self.__mm
-    
+    @property
     def get_A(self):
         return self.__aa
 
