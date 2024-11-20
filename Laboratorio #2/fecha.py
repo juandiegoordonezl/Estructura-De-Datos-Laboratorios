@@ -26,4 +26,6 @@ class Fecha:
     def get_A(self):
         return self.__aa
 
+    def __str__(self) -> str:
+        return f"{self.get_Dia} / {self.get_Mes} / {self.get_A}"
 

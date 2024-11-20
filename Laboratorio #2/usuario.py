@@ -39,28 +39,41 @@ class Usuario:
         self.__dir = dir
         
     #getters
+     
+    @property 
     def getNombre(self):
         return self.__nombre
-
+     
+    @property 
     def getId(self):
         return self.__id
 
+     
+    @property 
     def getFecha_nacimiento(self):
         return self.__fecha_nacimiento
 
+     
+    @property 
     def getCiudad_nacimiento(self):
         return self.__ciudad_nacimiento
 
+     
+    @property 
     def getTel(self):
         return self.__tel
 
+ 
+    @property 
     def getEmail(self):
         return self.__email
 
+ 
+    @property 
     def getDir(self):
         return self.__dir
     
     #Metodo toString()
     def __str__(self): 
-        return "Nombre: "+self.__nombre+"Id: "+self.__id+"Fecha de nacimiento: "+self.__fecha_nacimiento+"Ciudad de nacimento: "+self.__ciudad_nacimiento+"Tel: "+ self.__tel+"Email: "+self.__email+"Direccion: "+ print(self.__dir)
+        return f"Nombre: {self.getNombre} Id: {self.getId} Fecha de nacimiento: {self.getFecha_nacimiento} Ciudad de nacimento: {self.getCiudad_nacimiento} Tel: {self.getTel} Email: {self.getEmail} Direccion: {self.getDir}"
 

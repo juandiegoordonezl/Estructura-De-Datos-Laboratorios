@@ -44,9 +44,8 @@ class Direccion:
 
     def setBarrio(self, barrio):
         self.__barrio = barrio
-        
-    
-    @property 
+      
+    @property   
     def getApto(self):
         return self.__apto
 
