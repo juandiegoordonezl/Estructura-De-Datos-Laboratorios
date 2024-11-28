@@ -4,8 +4,8 @@ from direccion import *
 class Usuario:
     #Atributos
 
-    def __init__(self, nombre: str = "", id: int = 0, fecha_nacimiento: Fecha = Fecha(), 
-                 ciudad_nacimiento: str = "", tel: int = 0, email: str = "", dir: Direccion = Direccion()):
+    def __init__(self, nombre: str = None, id: int = None, fecha_nacimiento: Fecha = Fecha(), 
+                 ciudad_nacimiento: str = None, tel: int = None, email: str = None, dir: Direccion = Direccion()):
         
         self.__nombre = nombre
         self.__id = id
@@ -75,5 +75,5 @@ class Usuario:
     
     #Metodo toString()
     def __str__(self): 
-        return f"Nombre: {self.getNombre} Id: {self.getId} Fecha de nacimiento: {self.getFecha_nacimiento} Ciudad de nacimento: {self.getCiudad_nacimiento} Tel: {self.getTel} Email: {self.getEmail} Direccion: {self.getDir}"
+        return f"{self.getNombre} {self.getId} {self.getFecha_nacimiento} {self.getCiudad_nacimiento} {self.getTel} {self.getEmail} {self.getDir}"
 

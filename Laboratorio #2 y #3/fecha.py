@@ -1,6 +1,6 @@
 class Fecha:
     #Atributos
-    def __init__(self, dd: int =1, mm: int =1, aa: int =1900):
+    def __init__(self, dd: int =None, mm: int =None, aa: int =None):
         self.__dd = dd
         self.__mm = mm
         self.__aa = aa
@@ -26,6 +26,6 @@ class Fecha:
     def get_A(self):
         return self.__aa
 
-    def __str__(self) -> str:
-        return f"{self.get_Dia} / {self.get_Mes} / {self.get_A}"
+    def __str__(self) :
+        return f"{self.get_Dia} {self.get_Mes} {self.get_A}"
 

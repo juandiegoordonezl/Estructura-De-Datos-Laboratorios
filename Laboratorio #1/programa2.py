@@ -18,7 +18,7 @@ for signo in string.punctuation:
 palabras = contenido.split()
 
 # Contar las apariciones de la palabra "en"
-conteo_en = palabras.count("en")
+conteo_en = palabras.count("no")
 
 # Mostrar el resultado
 print(f"La palabra 'en' se repite {conteo_en} veces en el archivo.")

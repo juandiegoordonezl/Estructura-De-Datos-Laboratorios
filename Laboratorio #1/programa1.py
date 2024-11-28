@@ -38,4 +38,4 @@ for y in numeros:
 promedio = suma / len(numeros)
 
 # Imprime los resultados
-print(f"El valor máximo es {max_val}, el valor mínimo es {min_val}, la suma es {suma} y el promedio de los valores es {promedio:.2f}")
+print(f"El valor máximo es {max_val}, el valor mínimo es {min_val}, la suma es {suma} y el promedio de los valores es {promedio}")

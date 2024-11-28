@@ -1,6 +1,6 @@
 class Direccion:
     #Atributos
-    def __init__(self,calle="No tiene una direccion registrada",nomenclatura="",barrio="",ciudad="",edificio="",apto=""):      
+    def __init__(self,calle:str= None,nomenclatura: str=None ,barrio: str= None,ciudad: str= None,edificio: str=None,apto:str=None):      
         self.__calle = calle
         self.__nomenclatura = nomenclatura
         self.__barrio = barrio
@@ -54,4 +54,4 @@ class Direccion:
         
     #Metodo toString()
     def __str__(self): 
-        return self.__calle+" "+self.__nomenclatura+" "+self.__barrio+" "+self.__ciudad+" "+self.__edificio+" "+self.__apto
+        return f"{self.__calle} {self.__nomenclatura} {self.__barrio} {self.__ciudad} {self.__edificio} {self.__apto}"
