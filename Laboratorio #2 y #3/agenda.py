@@ -31,10 +31,6 @@ class Agenda:
         if self.__no_reg < self.__capacity:
             # Insertar en orden, desplazando elementos si es necesario
             i = self.__no_reg
-            while i > 0 and self.__registro[i - 1].getId > usuario.getId:
-                self.__registro[i] = self.__registro[i - 1]
-                i -= 1
-
             self.__registro[i] = usuario
             self.__no_reg += 1
             return True
@@ -97,43 +93,9 @@ class Agenda:
             print("Agenda importada con éxito.")
         except Exception as e:
             print(f"Error al importar la agenda: {e}")
-            
-            
-    def import_from_file(self, file_path):
-       
-        try:
-            with open(file_path, "r") as file:
-                for line in file:
-                    # Dividir los datos en partes
-                    data = line.strip().split(",")
-                    nombre = data[0]
-                    id_ = int(data[1])
-                    dd, mm, aa = map(int, data[2].split("/"))
-                    fecha_nacimiento = Fecha(dd, mm, aa)
-                    ciudad_nacimiento = data[3]
-                    tel = int(data[4])
-                    email = data[5]
-                    direccion = Direccion(data[6], data[7], data[8], data[9], data[10], data[11])
-                    usuario = Usuario(nombre, id_, fecha_nacimiento, ciudad_nacimiento, tel, email, direccion)
-                    
-                    # Intentar agregar al usuario
-                    self.agregar(usuario)
-            print("Agenda importada con éxito.")
-        except Exception as e:
-            print(f"Error al importar la agenda: {e}")
 
 
 
 
 
-        persona1=Usuario("j",1,Fecha(),"dfgd",546,"fdsgsf",Direccion())
-        persona2=Usuario("j",2,Fecha(),"dfgd",546,"fdsgsf",Direccion())
-        persona3=Usuario("j",3,Fecha(),"dfgd",546,"fdsgsf",Direccion())
-        lista=Agenda()
-        
-        lista.agregar(persona1)
-        lista.agregar(persona2)
-        lista.agregar(persona3)
-        print(lista.buscar(1))
-        
-            
+   
