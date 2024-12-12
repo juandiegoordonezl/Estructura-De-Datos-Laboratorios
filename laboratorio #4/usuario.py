@@ -76,4 +76,3 @@ class Usuario:
     #Metodo toString()
     def __str__(self): 
         return f"{self.getNombre} {self.getId} {self.getFecha_nacimiento} {self.getCiudad_nacimiento} {self.getTel} {self.getEmail} {self.getDir}"
-

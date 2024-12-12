@@ -28,4 +28,3 @@ class Fecha:
 
     def __str__(self) :
         return f"{self.get_Dia} {self.get_Mes} {self.get_A}"
-
