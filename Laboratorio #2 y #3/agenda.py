@@ -1,47 +1,101 @@
 from usuario import *
 class Agenda:
     #Atributos
-    def __init__(self,registro= [],no_reg: int=0,capacity: int=0):  
-            
-            self.__registro = []*capacity
-            self.__no_reg = no_reg
-            self.__capacity = capacity
-            
-
+    def __init__(self, capacity=0):  
+        self.__registro = [None] * capacity  # Array con tamaño fijo
+        self.__no_reg = 0  # Número de registros actuales
+        self.__capacity = capacity
     
-    @property 
+  # Getters
+    @property
     def getCapacity(self):
-        return self.__capacity  
-    @property 
+        return self.__capacity
+
+    @property
     def getRegistro(self):
         return self.__registro
-    
-    def agregar(self,u):
-        if u in self.__registro:
-            return False
-        elif (len(self.getRegistro)+1)<= self.getCapacity:
-            self.__registro.append(u)
-            return True
-        else:
-            return False
-            
-    def buscar(self,id):
-        for x in self.getRegistro:
-            indice=0
-            if x.getId() == id:
-                return indice
-            indice+=1
 
+    @property
+    def getNoReg(self):
+        return self.__no_reg
     
-if __name__ == "__main__":
-        persona1=Usuario("j",1,Fecha(),"dfgd",546,"fdsgsf",Direccion())
-        persona2=Usuario("j",2,Fecha(),"dfgd",546,"fdsgsf",Direccion())
-        persona3=Usuario("j",3,Fecha(),"dfgd",546,"fdsgsf",Direccion())
-        lista=Agenda()
+         
+       
+    def agregar(self, usuario):
+       
+        # Verificar si el usuario ya existe en el registro
+        if self.buscar(usuario.getId) != -1:
+            return False  # El usuario ya está registrado
+
+        # Verificar si hay espacio para agregar un nuevo usuario
+        if self.__no_reg < self.__capacity:
+            # Insertar en orden, desplazando elementos si es necesario
+            i = self.__no_reg
+            self.__registro[i] = usuario
+            self.__no_reg += 1
+            return True
+
+        return False  # No hay espacio en la agenda
+    
+    
+    def buscar(self, id):
+        for i in range(self.__no_reg):  # Recorrer solo los registros activos
+            if self.__registro[i] is not None and self.__registro[i].getId == id:
+                return i
+        return -1  # Usuario no encontrado
+    
+
+
+    def eliminar(self, i):
+        if i < 0 or i >= self.__no_reg:
+            return None
+        else:
+            # Guardar el usuario que será eliminado
+            temp = self.__registro[i]
+
+            # Desplazar usuarios para llenar el vacío
+            for j in range(i, self.__no_reg - 1):
+                self.__registro[j] = self.__registro[j + 1]
+            self.__registro[self.__no_reg - 1] = None
+            self.__no_reg -= 1
+            return temp
+
+    def to_file(self, file_path):
         
-        lista.agregar(persona1)
-        lista.agregar(persona2)
-        lista.agregar(persona3)
-        print(lista.buscar(1))
-        
+        try:
+            with open(file_path, "w") as file:
+                for i in range(self.__no_reg):
+                    usuario = self.__registro[i]
+                    # Serializamos los datos del usuario
+                    file.write(f"{usuario.getNombre},{usuario.getId},{usuario.getFecha_nacimiento.get_Dia}/{usuario.getFecha_nacimiento.get_Mes}/{usuario.getFecha_nacimiento.get_A},{usuario.getCiudad_nacimiento},{usuario.getTel},{usuario.getEmail},{usuario.getDir.getCalle},{usuario.getDir.getNomenclatura},{usuario.getDir.getBarrio},{usuario.getDir.getCiudad},{usuario.getDir.getEdificio},{usuario.getDir.getApto}\n")
+            print("Agenda exportada con éxito.")
+        except Exception as e:
+            print(f"Error al exportar la agenda: {e}")
             
+    def import_from_file(self, file_path):
+        try:
+            with open(file_path, "r") as file:
+                for line in file:
+                    # Dividir los datos en partes
+                    data = line.strip().split(",")
+                    nombre = data[0]
+                    id_ = int(data[1])
+                    dd, mm, aa = map(int, data[2].split("/"))
+                    fecha_nacimiento = Fecha(dd, mm, aa)
+                    ciudad_nacimiento = data[3]
+                    tel = int(data[4])
+                    email = data[5]
+                    direccion = Direccion(data[6], data[7], data[8], data[9], data[10], data[11])
+                    usuario = Usuario(nombre, id_, fecha_nacimiento, ciudad_nacimiento, tel, email, direccion)
+                    
+                    # Intentar agregar al usuario
+                    self.agregar(usuario)
+            print("Agenda importada con éxito.")
+        except Exception as e:
+            print(f"Error al importar la agenda: {e}")
+
+
+
+
+
+   
