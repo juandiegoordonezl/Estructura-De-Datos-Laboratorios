@@ -5,11 +5,11 @@ from agenda import Agenda
 from direccion import Direccion
 
 predefinidos = [
-    "Juan - 123 - 16/7/2005 - Valledupar - 123456789 - imlargo@unal - Calle 6, Cra 6, Barrio Robledo, Ciudad 1, Edificio 1, Apto 100",
-    "Alejandra - 201 - 16/7/2005 - Valledupar - 987654321 - aleja@unal - Calle 5, Cra 5, Barrio 1, Ciudad 1, Edificio 2, Apto 201",
-    "Harrison - 302 - 16/7/2005 - Valledupar - 12349876 - harri@unal - Calle 4, Cra 4, Barrio 1, Ciudad 1, Edificio 3, Apto 302",
-    "JulianMoreno - 403 - 16/7/2005 - Valledupar - 98712340 - juliangod@unal - Calle 3, Cra 3, Barrio 1, Ciudad 1, Edificio 4, Apto 403",
-    "TaylorSwift - 504 - 16/7/2005 - Valledupar - 19283745 - taylor@unal - Calle 2, Cra 2, Barrio 1, Ciudad 1, Edificio 5, Apto 504",
+    "Carlos - 123 - 16/7/2005 - Medellin - 123456789 - miamor@unal - Calle 6, Cra 6, Barrio 3, Ciudad 1, Edificio 1, Apto 100",
+    "Alejandra - 201 - 16/7/2005 - Ibague - 987654321 - miaumiau@unal - Calle 5, Cra 5, Barrio 1, Ciudad 1, Edificio 2, Apto 201",
+    "Sebas - 302 - 16/7/2005 - Espinal - 12349876 - sebas@unal - Calle 4, Cra 4, Barrio 1, Ciudad 1, Edificio 3, Apto 302",
+    "Horus - 403 - 16/7/2005 - Amazonas - 98712340 - horus@unal - Calle 3, Cra 3, Barrio 1, Ciudad 1, Edificio 4, Apto 403",
+    "Artemis - 504 - 16/7/2005 - Bogota - 19283745 - artemis@unal - Calle 2, Cra 2, Barrio 1, Ciudad 1, Edificio 5, Apto 504",
 ]
 
 def crearUsuarioDesdeTexto(informacion: str):
@@ -87,13 +87,14 @@ def problema_a():
     
     lista_simple.removeFirst() # Elimina el 2
     lista_simple.removeLast() # Elimina el 20
+    
     anterior = lista_simple.first()
     while anterior.getNext().getData() != 10:
         anterior = anterior.getNext()
+    
     # Remover el 10
     objetivo = anterior.getNext()
     anterior.setNext(objetivo.getNext())
-
     print("Lista Simple después de eliminar 1, 10 y 20:")
     lista_simple.printData()
 

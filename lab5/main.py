@@ -1,7 +1,4 @@
 import random
-import time
-import os
-import sys
 from listas import DoubleList, SimpleList, SimpleNode, DoubleNode
 from usuario import Usuario
 from fecha import Fecha
@@ -40,16 +37,16 @@ class Ordenador:
             self.lista[j + 1] = key
 
     def ordenar_mergeSort(self):
-        self.lista = self._mergeSort(self.lista)
+        self.lista = self.mergeSort(self.lista)
 
-    def _mergeSort(self, array):
+    def mergeSort(self, array):
         if len(array) > 1:
             mid = len(array) // 2
             L = array[:mid]
             R = array[mid:]
 
-            self._mergeSort(L)
-            self._mergeSort(R)
+            self.mergeSort(L)
+            self.mergeSort(R)
 
             i = j = k = 0
 
@@ -91,11 +88,12 @@ class Ordenador:
         return -1
 
 predefinidos = [
-    "Juan - 123 - 16/7/2005 - Valledupar - 123456789 - imlargo@unal - Calle 6, Cra 6, Barrio Robledo, Ciudad 1, Edificio 1, Apto 100",
-    "Alejandra - 201 - 16/7/2005 - Valledupar - 987654321 - aleja@unal - Calle 5, Cra 5, Barrio 1, Ciudad 1, Edificio 2, Apto 201",
-    "Harrison - 302 - 16/7/2005 - Valledupar - 12349876 - harri@unal - Calle 4, Cra 4, Barrio 1, Ciudad 1, Edificio 3, Apto 302",
-    "JulianMoreno - 403 - 16/7/2005 - Valledupar - 98712340 - juliangod@unal - Calle 3, Cra 3, Barrio 1, Ciudad 1, Edificio 4, Apto 403",
-    "TaylorSwift - 504 - 16/7/2005 - Valledupar - 19283745 - taylor@unal - Calle 2, Cra 2, Barrio 1, Ciudad 1, Edificio 5, Apto 504",
+    "Carlos - 123 - 16/7/2005 - Medellin - 123456789 - miamor@unal - Calle 6, Cra 6, Barrio 3, Ciudad 1, Edificio 1, Apto 100",
+    "Alejandra - 201 - 16/7/2005 - Ibague - 987654321 - miaumiau@unal - Calle 5, Cra 5, Barrio 1, Ciudad 1, Edificio 2, Apto 201",
+    "Sebas - 302 - 16/7/2005 - Espinal - 12349876 - sebas@unal - Calle 4, Cra 4, Barrio 1, Ciudad 1, Edificio 3, Apto 302",
+    "Horus - 403 - 16/7/2005 - Amazonas - 98712340 - horus@unal - Calle 3, Cra 3, Barrio 1, Ciudad 1, Edificio 4, Apto 403",
+    "Artemis - 504 - 16/7/2005 - Bogota - 19283745 - artemis@unal - Calle 2, Cra 2, Barrio 1, Ciudad 1, Edificio 5, Apto 504",
+    "Sora - 804 - 16/7/2005 - Bello - 52342 - soraaa@unal - Calle 2, Cra 2, Barrio 1, Ciudad 1, Edificio 5, Apto 504",
 ]
 
 def crearUsuarioDesdeTexto(informacion):
@@ -174,19 +172,25 @@ def test_ordenador():
     ordenador.mostrar()
     
     ordenador.inicializar()
+    print("Arreglo inicial:")
+    ordenador.mostrar()
     ordenador.ordenar_seleccion()
     print("Arreglo ordenado por selección:")
     ordenador.mostrar()
     
     ordenador.inicializar()
+    print("Arreglo inicial:")
+    ordenador.mostrar()
     ordenador.ordenar_insercion()
     print("Arreglo ordenado por inserción:")
     ordenador.mostrar()
     
     ordenador.inicializar()
+    print("Arreglo inicial:")
+    ordenador.mostrar()
     ordenador.ordenar_mergeSort()
     print("Arreglo ordenado por merge sort:")
-    ordenador.mostrar()
+    ordenador.mostrar() 
     
     valor = ordenador.lista[5]  # Tomar un valor del arreglo para la búsqueda binaria
     index = ordenador.busqueda_binaria(valor)
