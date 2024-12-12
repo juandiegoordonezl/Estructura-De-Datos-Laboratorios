@@ -88,9 +88,9 @@ class Ordenador:
         return -1
 
 predefinidos = [
-    "Carlos - 123 - 16/7/2005 - Medellin - 123456789 - miamor@unal - Calle 6, Cra 6, Barrio 3, Ciudad 1, Edificio 1, Apto 100",
+    "Carlos - 564 - 16/7/2005 - Medellin - 123456789 - miamor@unal - Calle 6, Cra 6, Barrio 3, Ciudad 1, Edificio 1, Apto 100",
     "Alejandra - 201 - 16/7/2005 - Ibague - 987654321 - miaumiau@unal - Calle 5, Cra 5, Barrio 1, Ciudad 1, Edificio 2, Apto 201",
-    "Sebas - 302 - 16/7/2005 - Espinal - 12349876 - sebas@unal - Calle 4, Cra 4, Barrio 1, Ciudad 1, Edificio 3, Apto 302",
+    "Sebas - 702 - 16/7/2005 - Espinal - 12349876 - sebas@unal - Calle 4, Cra 4, Barrio 1, Ciudad 1, Edificio 3, Apto 302",
     "Horus - 403 - 16/7/2005 - Amazonas - 98712340 - horus@unal - Calle 3, Cra 3, Barrio 1, Ciudad 1, Edificio 4, Apto 403",
     "Artemis - 504 - 16/7/2005 - Bogota - 19283745 - artemis@unal - Calle 2, Cra 2, Barrio 1, Ciudad 1, Edificio 5, Apto 504",
     "Sora - 804 - 16/7/2005 - Bello - 52342 - soraaa@unal - Calle 2, Cra 2, Barrio 1, Ciudad 1, Edificio 5, Apto 504",
@@ -192,7 +192,8 @@ def test_ordenador():
     print("Arreglo ordenado por merge sort:")
     ordenador.mostrar() 
     
-    valor = ordenador.lista[5]  # Tomar un valor del arreglo para la búsqueda binaria
+    index = int(input(("Ingrese el índice a buscar: ")))
+    valor = ordenador.lista[index]  # Tomar un valor del arreglo para la búsqueda binaria
     index = ordenador.busqueda_binaria(valor)
     print(f"Valor {valor} encontrado en el índice {index}")
 
