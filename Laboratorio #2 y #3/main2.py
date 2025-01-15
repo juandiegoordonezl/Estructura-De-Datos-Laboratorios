@@ -50,12 +50,10 @@ class Main:
 
         # Eliminar un usuario por ID
         id_eliminar = 3
-        posicion = agenda.buscar(id_eliminar)
-        if posicion != -1:
-            eliminado = agenda.eliminar(posicion)
-            print(f"Usuario eliminado: {eliminado}")
-        else:
-            print(f"Usuario con ID {id_eliminar} no encontrado.")
+     
+        eliminado = agenda.eliminar(id_eliminar)
+        print(f"Usuario eliminado: {eliminado}")
+
 
     # Exportar la agenda actualizada a un nuevo archivo
         agenda.to_file("Agenda2.txt")

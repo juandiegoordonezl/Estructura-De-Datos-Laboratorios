@@ -29,7 +29,6 @@ class Agenda:
 
         # Verificar si hay espacio para agregar un nuevo usuario
         if self.__no_reg < self.__capacity:
-            # Insertar en orden, desplazando elementos si es necesario
             i = self.__no_reg
             self.__registro[i] = usuario
             self.__no_reg += 1
@@ -47,19 +46,21 @@ class Agenda:
 
 
     def eliminar(self, i):
-        if i < 0 or i >= self.__no_reg:
-            return None
-        else:
-            # Guardar el usuario que será eliminado
-            temp = self.__registro[i]
+        # Verificar si el usuario ya existe en el registro
+        if self.buscar(i) != -1:
+            posicion = self.buscar(i)
+             # Guardar el usuario que será eliminado
+            temp = self.__registro[posicion]
 
             # Desplazar usuarios para llenar el vacío
-            for j in range(i, self.__no_reg - 1):
+            for j in range(posicion, self.__no_reg - 1):
                 self.__registro[j] = self.__registro[j + 1]
             self.__registro[self.__no_reg - 1] = None
             self.__no_reg -= 1
             return temp
-
+        else:
+            return False 
+           
     def to_file(self, file_path):
         
         try:
