@@ -1,3 +1,18 @@
+class EnumRoles:
+    ADMINISTRADOR = "Administrador"
+    INVESTIGADOR = "Investigador"
+
+class Instanciador:
+
+    @staticmethod
+    def crearDesdeInput(classType):
+        atributos = [attr for attr in dir(classType) if not callable(getattr(classType, attr)) and not attr.startswith("__")]
+        valores = []
+        for atributo in atributos:
+            valor = input(f"Ingrese {atributo}: ")
+            valores.append(valor)
+        return classType(*valores)
+
 class Serializador:
     separador = ';'
     
@@ -71,6 +86,26 @@ class Empleado(Usuario):
     def login(self, password):
         return self.password == password
         
+        
+class Solicitud:
+    def __init__(self, tipo, descripcion, equipo=None, placa=None):
+        self.tipo = tipo  # "Agregar" o "Eliminar"
+        self.descripcion = descripcion
+        self.equipo = equipo  # Objeto Equipo (solo para solicitudes de agregar)
+        self.placa = placa  # Código del equipo (solo para solicitudes de eliminar)
+        self.estado = "Pendiente"  # "Pendiente", "Aceptada" o "Rechazada"
+
+class Equipo:
+    def __init__(self, nombre, placa, fecha_compra, valor_compra, empleado):
+        self.nombre = nombre
+        self.placa = placa
+        self.fecha_compra = fecha_compra
+        self.valor_compra = valor_compra
+        self.empleado = empleado  # Objeto Empleado (Investigador o Administrador)
+
+class Inventario:
+    def __init__(self):
+        self.equipos = []  # Lista de objetos Equipo
 
 class App:
     
