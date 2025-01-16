@@ -107,8 +107,13 @@ def main():
                 print(f"Archivo de inventario generado: {archivo}")
 
             elif opcion == "6":
-                archivo = f"{investigador.getNombre}_{investigador.getId}.txt"
-                investigador.generar_archivo_solicitudes(archivo)
+                archivo = f"Solicitudes{investigador.getNombre}_{investigador.getId}.txt"
+                cedula_administrador = int(input("Ingrese la cédula del administrador: "))
+                investigador.generar_archivo_solicitudes(archivo,cedula_administrador,
+                    "Solicitudes_agregar.txt",
+                    "Solicitudes_eliminar.txt",
+                    "Control_de_cambios.txt",
+                    empleados)
                 print(f"Archivo de solicitudes generado: {archivo}")
 
             elif opcion == "7":
