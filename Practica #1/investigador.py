@@ -3,7 +3,7 @@ class Investigador(Empleado):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.solicitudes = DoubleList()
-        4
+        
     @classmethod
     def cargar_inventario_investigador(cls, archivo_inventario, cedula):
         """
@@ -100,7 +100,7 @@ class Investigador(Empleado):
         current = empleados.first()
         while current:
             empleado = current.getData()
-            if isinstance(empleado, Administrador) and empleado.getId == cedula_administrador:
+            if empleado.getId == cedula_administrador:
                 administrador = empleado
                 break
             current = current.getNext()
@@ -183,30 +183,36 @@ class Investigador(Empleado):
             print("- No se encontró el archivo de control de cambios.")
         except Exception as e:
             print(f"- Error al leer el archivo de control de cambios: {e}")
-    def generar_archivo_inventario(self, archivo):
-        """
-        Genera un archivo con la información del inventario del investigador.
-        :param archivo: Ruta del archivo donde se guardará el inventario.
-        """
-        try:
-            with open(archivo, "w") as file:
-                current = self.inventario.first()
-                if not current:
-                    file.write("No hay equipos en el inventario.\n")
+    def generar_archivo_inventario(self, archivo, cedula):
+            """
+            Genera un archivo con la información del inventario del investigador.
+            :param archivo: Ruta del archivo donde se guardará el inventario.
+            :param cedula: Cédula del investigador cuyo inventario se desea guardar.
+            """
+            try:
+                # Cargar el inventario del investigador
+                inventario = self.cargar_inventario_investigador("Practica #1/InventarioGeneral.txt", cedula)
+
+                # Validar si el inventario está vacío
+                if inventario.isEmpty():
+                    with open(archivo, "w") as file:
+                        file.write("No hay equipos en el inventario.\n")
                     print("El inventario está vacío. Archivo generado con un mensaje informativo.")
                     return
 
-                while current:
-                    equipo = current.getData()
-                    file.write(f"{equipo['nombre_equipo']} {equipo['numero_placa']} "
-                            f"{equipo['fecha_compra']} {equipo['valor_compra']}\n")
-                    current = current.getNext()
+                # Escribir el inventario en el archivo
+                with open(archivo, "w") as file:
+                    current = inventario.first()
+                    while current:
+                        equipo = current.getData()
+                        file.write(f"{equipo['nombre_equipo']} {equipo['numero_placa']} "
+                                f"{equipo['fecha_compra']} {equipo['valor_compra']}\n")
+                        current = current.getNext()
 
-            print(f"Archivo de inventario generado: {archivo}")
-        except Exception as e:
-            print(f"Error al generar el archivo de inventario: {e}")
-            
-            
+                print(f"Archivo de inventario generado: {archivo}")
+            except Exception as e:
+                print(f"Error al generar el archivo de inventario: {e}")
+
     def generar_archivo_solicitudes(self, archivo):
         """
         Genera un archivo con el estado de las solicitudes realizadas por el investigador.

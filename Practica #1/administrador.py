@@ -343,7 +343,7 @@ class Administrador(Empleado):
             print(f"No se encontró un investigador con la cédula {cedula}.")
             return
 
-        investigador.generar_archivo_inventario(archivo)
+        investigador.generar_archivo_inventario(archivo,cedula)
         
     def generar_archivo_inventario_general(self, archivo):
         """

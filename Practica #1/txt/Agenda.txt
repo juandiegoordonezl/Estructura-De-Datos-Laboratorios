@@ -1,0 +1,5 @@
+Juan,1,1/1/2000,Medellín,1234567890,juan@example.com,Calle 10,A,Centro,Medellín,Edificio Alfa,101
+Ana,2,15/5/1995,Bogotá,2345678901,ana@example.com,Carrera 5,B,Chapinero,Bogotá,Edificio Beta,202
+Luis,3,10/8/1990,Cali,3456789012,luis@example.com,Avenida 20,C,Norte,Cali,Edificio Gamma,303
+Sofía,4,22/3/1988,Barranquilla,4567890123,sofia@example.com,Calle 30,D,Sur,Barranquilla,Edificio Delta,404
+Carlos,5,5/12/1992,Cartagena,5678901234,carlos@example.com,Carrera 50,E,Centro Histórico,Cartagena,Edificio Epsilon,505

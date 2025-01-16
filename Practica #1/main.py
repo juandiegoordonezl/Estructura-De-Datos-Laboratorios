@@ -102,12 +102,12 @@ def main():
                  )
 
             elif opcion == "5":
-                archivo = f"Inventario_{investigador.getNombre}_{investigador.getId}.txt"
-                investigador.generar_archivo_inventario(archivo)
+                archivo = f"{investigador.getNombre}_{investigador.getId}.txt"
+                investigador.generar_archivo_inventario(archivo,investigador.getId)
                 print(f"Archivo de inventario generado: {archivo}")
 
             elif opcion == "6":
-                archivo = f"Solicitudes_{investigador.getNombre}_{investigador.getId}.txt"
+                archivo = f"{investigador.getNombre}_{investigador.getId}.txt"
                 investigador.generar_archivo_solicitudes(archivo)
                 print(f"Archivo de solicitudes generado: {archivo}")
 
@@ -353,9 +353,24 @@ def main():
 
             elif opcion == "10":
                 cedula_investigador = int(input("Ingrese la cédula del investigador: "))
-                archivo = f"Inventario_{cedula_investigador}.txt"
-                administrador.generar_archivo_inventario_investigador(cedula_investigador, archivo, empleados)
-                print(f"Archivo de inventario generado para el investigador {cedula_investigador}: {archivo}")
+
+                # Buscar al investigador por su cédula
+                nombre_investigador = None
+                current = empleados.first()
+                while current:
+                    empleado = current.getData()
+                    if empleado.getId == cedula_investigador:
+                        nombre_investigador = empleado.getNombre.replace(" ", "-")
+                        break
+                    current = current.getNext()
+
+                if not nombre_investigador:
+                    print(f"No se encontró un investigador con la cédula {cedula_investigador}.")
+                else:
+                    archivo = f"{nombre_investigador}_{cedula_investigador}.txt"
+                    administrador.generar_archivo_inventario_investigador(cedula_investigador, archivo, empleados)
+                    print(f"Archivo de inventario generado para el investigador {nombre_investigador}: {archivo}")
+
 
             elif opcion == "11":
                 archivo = "InventarioGeneral.txt"
