@@ -114,3 +114,82 @@ class DoubleList:
             print(node.getData())
             node = node.getNext()
         pass
+    
+    def _split(self, head):
+        """
+        Divide la lista a partir del nodo `head` en dos mitades.
+        Retorna el inicio de la segunda mitad.
+        """
+        slow = head
+        fast = head.getNext()
+
+        while fast and fast.getNext():
+            slow = slow.getNext()
+            fast = fast.getNext().getNext()
+
+        mid = slow.getNext()
+        slow.setNext(None)  # Divide la lista
+        if mid:
+            mid.setPrev(None)
+        return mid
+
+    def _merge(self, left, right, key):
+        """
+        Fusiona dos sublistas ordenadas según la función `key`.
+        Retorna el nuevo inicio de la lista fusionada.
+        """
+        dummy = DoubleNode()  # Nodo temporal para facilitar la fusión
+        tail = dummy
+
+        while left and right:
+            if key(left.getData()) <= key(right.getData()):  # Comparar según la función clave
+                tail.setNext(left)
+                left.setPrev(tail)
+                left = left.getNext()
+            else:
+                tail.setNext(right)
+                right.setPrev(tail)
+                right = right.getNext()
+            tail = tail.getNext()
+
+        # Conectar cualquier nodo restante
+        if left:
+            tail.setNext(left)
+            left.setPrev(tail)
+        if right:
+            tail.setNext(right)
+            right.setPrev(tail)
+
+        return dummy.getNext()
+
+    def _mergeSort(self, head, key):
+        """
+        Ordena la lista usando el algoritmo de Merge Sort y la función `key`.
+        Retorna el nuevo inicio de la lista ordenada.
+        """
+        if not head or not head.getNext():  # Caso base
+            return head
+
+        mid = self._split(head)
+
+        # Dividir y conquistar
+        left = self._mergeSort(head, key)
+        right = self._mergeSort(mid, key)
+
+        return self._merge(left, right, key)
+
+    def sort(self, key=lambda x: x):
+        """
+        Método público para ordenar la lista usando Merge Sort con una función `key`.
+        Actualiza `_head` y `_tail` después de ordenar.
+        """
+        if not self._head or not self._head.getNext():
+            return  # Lista vacía o con un solo elemento no necesita ordenarse
+
+        self._head = self._mergeSort(self._head, key)
+
+        # Actualizar el tail después de ordenar
+        current = self._head
+        while current.getNext():
+            current = current.getNext()
+        self._tail = current
