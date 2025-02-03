@@ -1,7 +1,8 @@
 from empleado import *
 from listas import *
 from controldecambios import    *
-
+import os 
+from investigador import Investigador
 
 class Administrador(Empleado):
     def __init__(self, *args, **kwargs):
@@ -42,7 +43,7 @@ class Administrador(Empleado):
             # Guardar en archivo Empleados.txt
             with open(archivo_empleados, "a") as emp_file:
                 emp_file.write(
-                    f"\n{empleado.getNombre} {empleado.getId} {empleado.getFecha_nacimiento.get_Dia} "
+                    f"{empleado.getNombre} {empleado.getId} {empleado.getFecha_nacimiento.get_Dia} "
                     f"{empleado.getFecha_nacimiento.get_Mes} {empleado.getFecha_nacimiento.get_A} "
                     f"{empleado.getCiudad_nacimiento} {empleado.getTel} {empleado.getEmail} "
                     f"{empleado.getDir}\n"
@@ -50,7 +51,7 @@ class Administrador(Empleado):
 
             # Guardar en archivo Password.txt
             with open(archivo_passwords, "a") as pass_file:
-                pass_file.write(f"\n{empleado.getId} {password} {rol}\n")
+                pass_file.write(f"{empleado.getId} {password} {rol}\n")
 
             print(f"Usuario {empleado.getNombre} agregado correctamente.")
         except Exception as e:
@@ -146,13 +147,11 @@ class Administrador(Empleado):
         except Exception as e:
             print(f"Error al cargar el inventario del administrador: {e}")
             return None
-
+        
     def consultar_solicitudes(self, archivo_agregar, archivo_eliminar):
         """
         Muestra todas las solicitudes pendientes, separándolas por tipo (adicionar o eliminar),
         leyendo directamente de los archivos de solicitudes.
-        :param archivo_agregar: Ruta del archivo de solicitudes de adición.
-        :param archivo_eliminar: Ruta del archivo de solicitudes de eliminación.
         """
         print("Solicitudes pendientes:")
 
@@ -181,81 +180,118 @@ class Administrador(Empleado):
         # Mostrar solicitudes de adicionar equipos
         if solicitudes_adicionar:
             print("\nSolicitudes para adicionar equipos:")
-            for solicitud in solicitudes_adicionar:
-                print(f"  - {solicitud}")
+            for idx, solicitud in enumerate(solicitudes_adicionar, start=1):
+                print(f"  {idx}. {solicitud}")
         else:
             print("\nNo hay solicitudes para adicionar equipos.")
 
         # Mostrar solicitudes para eliminar equipos
         if solicitudes_eliminar:
             print("\nSolicitudes para eliminar equipos:")
-            for solicitud in solicitudes_eliminar:
-                print(f"  - {solicitud}")
+            for idx, solicitud in enumerate(solicitudes_eliminar, start=1):
+                print(f"  {idx}. {solicitud}")
         else:
             print("\nNo hay solicitudes para eliminar equipos.")
-
-    def procesar_solicitud(self, solicitud, aprobado: bool, archivo_agregar, archivo_eliminar, archivo_cambios):
+            
+    def procesar_solicitud(self, solicitud, aprobado: bool, archivo_agregar, archivo_eliminar, archivo_cambios, archivo_inventario):
         """
-        Procesa una solicitud, aprobándola o rechazándola.
+        Procesa una solicitud, aprobándola o rechazándola, y actualiza los archivos correspondientes.
         :param solicitud: Objeto Solicitud a procesar.
         :param aprobado: True para aprobar la solicitud, False para rechazarla.
         :param archivo_agregar: Ruta del archivo para solicitudes de adición.
         :param archivo_eliminar: Ruta del archivo para solicitudes de eliminación.
         :param archivo_cambios: Ruta del archivo para el control de cambios.
+        :param archivo_inventario: Ruta del archivo de inventario general.
         """
+        investigador = solicitud.investigador
+
         if aprobado:
             solicitud.estado = "aprobada"
-            investigador = solicitud.investigador
 
             if solicitud.tipo == "adicionar":
-                # Agregar equipo al inventario del investigador
-                investigador.inventario.addLast({
+                # Agregar equipo al inventario general en el formato proporcionado
+                equipo = {
                     "nombre_equipo": solicitud.nombre,
                     "numero_placa": solicitud.placa,
                     "fecha_compra": solicitud.fecha_compra,
                     "valor_compra": solicitud.valor,
-                })
-                print(f"Equipo '{solicitud.nombre}' (Placa: {solicitud.placa}) agregado al inventario de {investigador.getNombre}.")
+                }
+                investigador.inventario.addLast(equipo)
+
+                # Leer el archivo de inventario general para agregar el equipo en la sección correcta
+                with open(archivo_inventario, "r") as inventario_general:
+                    lineas = inventario_general.readlines()
+
+                # Encontrar al investigador en el archivo y agregar el equipo debajo de su sección
+                actualizado = False
+                with open(archivo_inventario, "w") as inventario_general:
+                    for linea in lineas:
+                        inventario_general.write(linea)
+                        if linea.startswith(f"{investigador.getNombre} {investigador.getId}"):
+                            inventario_general.write(
+                                f"{solicitud.nombre} {solicitud.placa} "
+                                f"{solicitud.fecha_compra} {solicitud.valor}\n"
+                            )
+                            actualizado = True
+
+                    # Si el investigador no estaba en el archivo, agregarlo al final
+                    if not actualizado:
+                        inventario_general.write(f"\n{investigador.getNombre} {investigador.getId}\n")
+                        inventario_general.write(
+                            f"{solicitud.nombre} {solicitud.placa} "
+                            f"{solicitud.fecha_compra} {solicitud.valor}\n"
+                        )
+
+                print(f"Equipo '{solicitud.nombre}' (Placa: {solicitud.placa}) agregado al inventario general.")
 
             elif solicitud.tipo == "eliminar":
-                # Eliminar equipo del inventario del investigador
-                current = investigador.inventario.first()
+                # Eliminar equipo del inventario general
                 encontrado = False
-                while current:
-                    equipo = current.getData()
-                    if equipo["numero_placa"] == solicitud.placa:
-                        investigador.inventario.remove(current)
-                        print(f"Equipo con placa {solicitud.placa} eliminado del inventario de {investigador.getNombre}.")
-                        encontrado = True
-                        break
-                    current = current.getNext()
+                with open(archivo_inventario, "r") as inventario_general:
+                    lineas = inventario_general.readlines()
 
-                if not encontrado:
-                    print(f"No se encontró el equipo con placa {solicitud.placa} en el inventario de {investigador.getNombre}.")
-            
+                with open(archivo_inventario, "w") as inventario_general:
+                    for linea in lineas:
+                        if linea.startswith(f"{solicitud.placa}"):
+                            encontrado = True
+                            continue  # Omitir esta línea
+                        inventario_general.write(linea)
+
+                if encontrado:
+                    print(f"Equipo con placa {solicitud.placa} eliminado del inventario general.")
+                else:
+                    print(f"No se encontró el equipo con placa {solicitud.placa} en el inventario general.")
+
             # Registrar en el control de cambios
             self.registrar_cambio(
                 tipo_cambio="Agregar" if solicitud.tipo == "adicionar" else "Eliminar",
                 placa=solicitud.placa,
-                investigador_id=solicitud.investigador.getId,
+                investigador_id=investigador.getId,
                 estado="Aprobado",
-                archivo_cambios=archivo_cambios
+                archivo_cambios=archivo_cambios,
             )
-
         else:
             solicitud.estado = "rechazada"
             print(f"Solicitud para {solicitud.tipo} equipo (Placa: {solicitud.placa}) rechazada.")
 
-        # Eliminar la solicitud procesada de pendientes
-        current = self.solicitudes_pendientes.first()
-        while current:
-            if current.getData() == solicitud:
-                self.solicitudes_pendientes.remove(current)
-                break
-            current = current.getNext()
+        # Actualizar el archivo correspondiente de solicitudes pendientes
+        archivo_solicitud = archivo_agregar if solicitud.tipo == "adicionar" else archivo_eliminar
+        try:
+            with open(archivo_solicitud, "r") as file:
+                lineas = file.readlines()
 
-        # Actualizar archivos de solicitudes pendientes
-        self.actualizar_archivos_solicitudes(archivo_agregar, archivo_eliminar)
+            with open(archivo_solicitud, "w") as file:
+                for linea in lineas:
+                    if not linea.startswith(f"{investigador.getNombre} {investigador.getId} {solicitud.placa}"):
+                        file.write(linea)
+
+            print(f"Archivo de solicitudes actualizado: {archivo_solicitud}")
+        except FileNotFoundError:
+            print(f"Archivo {archivo_solicitud} no encontrado. No se pudo actualizar.")
+        except Exception as e:
+            print(f"Error al actualizar el archivo {archivo_solicitud}: {e}")
+
+
 
 
     def registrar_cambio(self, tipo_cambio, placa, investigador_id, estado, archivo_cambios):
@@ -296,7 +332,7 @@ class Administrador(Empleado):
         """
         try:
             # Abrir los archivos en modo de escritura
-            with open(archivo_agregar, "w") as agregar_file, open(archivo_eliminar, "w") as eliminar_file:
+            with open(archivo_agregar, "a") as agregar_file, open(archivo_eliminar, "a") as eliminar_file:
                 current = self.solicitudes_pendientes.first()
                 
                 while current:
@@ -344,51 +380,137 @@ class Administrador(Empleado):
             return
 
         investigador.generar_archivo_inventario(archivo,cedula)
-        
     def generar_archivo_inventario_general(self, archivo):
         """
-        Genera un archivo con el inventario general discriminado por investigador.
+        Genera o actualiza un archivo con el inventario general discriminado por investigador.
+        Si el archivo ya existe, añade los nuevos registros al final.
         :param archivo: Ruta del archivo donde se guardará el inventario general.
         """
         from gestorArchivos import GestorArchivos
+        import os  # Asegúrate de que este import esté presente al inicio del archivo
+
         try:
-            with open(archivo, "w") as file:
-                inventario = GestorArchivos.cargar_inventario_general("InventarioGeneral.txt")
+            # Usar modo "a" para agregar contenido si el archivo ya existe, "w" si no existe
+            modo = "a" if os.path.exists(archivo) else "w"
+
+            with open(archivo, modo) as file:
+                # Escribir encabezado si el archivo está vacío o recién creado
+                if modo == "w":
+                    file.write("Inventario General\n")
+                else:
+                    file.write("\n--- Nuevos Registros ---\n")
+
+                # Cargar inventario general
+                inventario = GestorArchivos.cargar_inventario_general("Practica #1/InventarioGeneral.txt")
                 current = inventario.first()
+
                 if not current:
                     file.write("El inventario general está vacío.\n")
                     print("El inventario general está vacío. Archivo generado con un mensaje informativo.")
                     return
 
+                # Escribir los datos del inventario
                 while current:
                     equipo = current.getData()
                     file.write(f"{equipo.nombre_empleado} {equipo.cedula_empleado} {equipo.nombre_equipo} "
                             f"{equipo.numero_placa} {equipo.fecha_compra} {equipo.valor_compra}\n")
                     current = current.getNext()
 
-            print(f"Archivo de inventario general generado: {archivo}")
+            print(f"Archivo de inventario general generado o actualizado: {archivo}")
         except Exception as e:
             print(f"Error al generar el archivo de inventario general: {e}")
 
+        def imprimir_control_cambios(self):
+            """
+            Imprime el control de cambios en la consola.
+            """
+            if self.control_cambios.isEmpty():
+                print("No hay cambios registrados.")
+                return
+
+            print("Control de Cambios:")
+            current = self.control_cambios.first()
+            while current:
+                cambio = current.getData()
+                print(f"Investigador ID: {cambio.investigador_id}, "
+                    f"Placa: {cambio.placa}, "
+                    f"Tipo de Cambio: {cambio.tipo_cambio}, "
+                    f"Fecha y Hora: {cambio.fecha_hora}")
+                current = current.getNext()
+
+
     def generar_archivo_control_cambios(self, archivo):
         """
-        Genera un archivo con el control de cambios.
+        Genera o actualiza un archivo con el control de cambios.
+        Si el archivo ya existe, añade los nuevos cambios al final.
+        Si no existe, lo crea y escribe todos los cambios.
         :param archivo: Ruta del archivo donde se guardará el control de cambios.
         """
         try:
-            with open(archivo, "w") as file:
-                current = self.control_cambios.first()
-                if not current:
-                    file.write("No hay cambios registrados.\n")
+            # Verificar si el archivo ya existe
+            modo = "a" if os.path.exists(archivo) else "w"
+
+            with open(archivo, modo) as file:
+                if self.control_cambios.isEmpty():
+                    if modo == "w":  # Solo escribimos este mensaje si el archivo es nuevo
+                        file.write("No hay cambios registrados.\n")
                     print("No hay cambios registrados. Archivo generado con un mensaje informativo.")
                     return
 
+                current = self.control_cambios.first()
                 while current:
                     cambio = current.getData()
                     file.write(f"{cambio.investigador_id} {cambio.placa} {cambio.tipo_cambio} "
-                            f"{cambio.fecha_hora}\n")
+                            f"{cambio.fecha_hora.strftime('%d/%m/%Y %H:%M:%S')}\n")
                     current = current.getNext()
 
-            print(f"Archivo de control de cambios generado: {archivo}")
+            print(f"Archivo de control de cambios generado o actualizado: {archivo}")
         except Exception as e:
             print(f"Error al generar el archivo de control de cambios: {e}")
+
+
+    def generar_archivo_solicitudes_pendientes(self, archivo, tipo):
+        """
+        Genera o actualiza un archivo con las solicitudes pendientes de un tipo específico (adicionar o eliminar).
+        Si el archivo ya existe, añade las nuevas solicitudes al final.
+        :param archivo: Ruta del archivo donde se guardarán las solicitudes pendientes.
+        :param tipo: Tipo de solicitud ("adicionar" o "eliminar").
+        """
+        try:
+            # Usar modo "a" para agregar contenido si el archivo ya existe, "w" si no existe
+            modo = "a" if os.path.exists(archivo) else "w"
+
+            with open(archivo, modo) as file:
+                if self.solicitudes_pendientes.isEmpty():
+                    if modo == "w":  # Si el archivo es nuevo, escribe un mensaje informativo
+                        file.write("No hay solicitudes pendientes.\n")
+                    print(f"No hay solicitudes pendientes de tipo '{tipo}'. Archivo generado con un mensaje informativo.")
+                    return
+
+                solicitudes_filtradas = False
+                current = self.solicitudes_pendientes.first()
+                while current:
+                    solicitud = current.getData()
+                    if solicitud.tipo == tipo:
+                        solicitudes_filtradas = True
+                        if tipo == "adicionar":
+                            file.write(
+                                f"{solicitud.investigador.getNombre} {solicitud.investigador.getId} "
+                                f"{solicitud.nombre} {solicitud.placa} "
+                                f"{solicitud.fecha_compra} {solicitud.valor}\n"
+                            )
+                        elif tipo == "eliminar":
+                            file.write(
+                                f"{solicitud.investigador.getNombre} {solicitud.investigador.getId} "
+                                f"{solicitud.placa} {solicitud.justificacion}\n"
+                            )
+                    current = current.getNext()
+
+                if not solicitudes_filtradas:
+                    if modo == "w":  # Solo si el archivo es nuevo, escribe este mensaje
+                        file.write(f"No hay solicitudes pendientes de tipo '{tipo}'.\n")
+                    print(f"No hay solicitudes pendientes de tipo '{tipo}'.")
+
+            print(f"Archivo de solicitudes pendientes de tipo '{tipo}' generado o actualizado: {archivo}")
+        except Exception as e:
+            print(f"Error al generar el archivo de solicitudes pendientes de tipo '{tipo}': {e}")

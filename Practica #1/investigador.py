@@ -93,6 +93,7 @@ class Investigador(Empleado):
         :param cedula_administrador: Cédula del administrador al que se enviará la solicitud.
         :param empleados: Lista de empleados para buscar al administrador.
         """
+                
         from solicitud import Solicitud  # Importación para evitar circularidad
 
         # Buscar el administrador correspondiente
@@ -207,48 +208,85 @@ class Investigador(Empleado):
         :param empleados: Lista de empleados para buscar al administrador.
         """
         try:
-            # Abrir el archivo para escritura
             with open(archivo, "w") as file:
-                # Llamar a consultar_estado_solicitudes para obtener el estado
-                print(f"Generando archivo de solicitudes en: {archivo}")
-                print("\nEstado de tus solicitudes:\n", file=file)
-                self.consultar_estado_solicitudes(cedula_administrador, archivo_agregar, archivo_eliminar, archivo_cambios, empleados)
-                
-                # Recopilar solicitudes pendientes
-                if self.solicitudes.isEmpty():
-                    file.write("No hay solicitudes realizadas.\n")
-                    print("No hay solicitudes realizadas. Archivo generado con un mensaje informativo.")
-                    return
+                # Encabezado del archivo
+                file.write("Estado de tus solicitudes:\n\n")
 
-                # Iterar sobre solicitudes pendientes y escribir en el archivo
+                # Solicitudes pendientes
                 file.write("Solicitudes pendientes:\n")
-                current = self.solicitudes.first()
-                while current:
-                    solicitud = current.getData()
-                    file.write(f"  Tipo: {solicitud.tipo}, Placa: {solicitud.placa}, "
-                            f"Estado: {solicitud.estado}, Fecha: {solicitud.fecha_solicitud}\n")
-                    current = current.getNext()
+                solicitudes_pendientes = []
+
+                # Leer solicitudes pendientes de agregar
+                try:
+                    with open(archivo_agregar, "r") as agregar_file:
+                        for line in agregar_file:
+                            if str(self.getId) in line:
+                                solicitudes_pendientes.append(line.strip())
+                except FileNotFoundError:
+                    file.write("  No se encontró el archivo de solicitudes para agregar.\n")
+
+                # Leer solicitudes pendientes de eliminar
+                try:
+                    with open(archivo_eliminar, "r") as eliminar_file:
+                        for line in eliminar_file:
+                            if str(self.getId) in line:
+                                solicitudes_pendientes.append(line.strip())
+                except FileNotFoundError:
+                    file.write("  No se encontró el archivo de solicitudes para eliminar.\n")
+
+                # Escribir solicitudes pendientes
+                if solicitudes_pendientes:
+                    for solicitud in solicitudes_pendientes:
+                        file.write(f"  - {solicitud}\n")
+                else:
+                    file.write("  No tienes solicitudes pendientes.\n")
 
                 # Cambios aprobados
                 file.write("\nCambios aprobados:\n")
+                cambios_aprobados = []
                 try:
                     with open(archivo_cambios, "r") as cambios_file:
-                        cambios = [line.strip().split() for line in cambios_file if line.strip()]
-                        cambios_investigador = [cambio for cambio in cambios if cambio[0] == str(self.getId)]
+                        for line in cambios_file:
+                            if str(self.getId) in line:
+                                cambios_aprobados.append(line.strip())
 
-                        if not cambios_investigador:
-                            file.write("  No tienes cambios aprobados.\n")
-                        else:
-                            for cambio in cambios_investigador:
-                                investigador_id, placa, tipo_cambio, fecha, hora = cambio
-                                file.write(f"  - {tipo_cambio} equipo con placa {placa} "
-                                        f"(Fecha: {fecha}, Hora: {hora})\n")
+                    if cambios_aprobados:
+                        for cambio in cambios_aprobados:
+                            investigador_id, placa, tipo_cambio, fecha, hora = cambio.split()
+                            file.write(f"  - {tipo_cambio} equipo con placa {placa} "
+                                    f"(Fecha: {fecha}, Hora: {hora})\n")
+                    else:
+                        file.write("  No tienes cambios aprobados.\n")
                 except FileNotFoundError:
                     file.write("  No se encontró el archivo de control de cambios.\n")
-                except Exception as e:
-                    file.write(f"  Error al leer el archivo de control de cambios: {e}\n")
 
-            print(f"Archivo de estado de solicitudes generado correctamente en: {archivo}")
+            print(f"Archivo de estado de solicitudes generado correctamente: {archivo}")
         except Exception as e:
             print(f"Error al generar el archivo de estado de solicitudes: {e}")
 
+    def generar_archivo_inventario(self, archivo, cedula):
+            """
+            Genera un archivo con la información del inventario del investigador.
+            :param archivo: Ruta del archivo donde se guardará el inventario.
+            :param cedula: Cédula del investigador cuyo inventario se desea guardar.
+            """
+            try:
+                # Cargar el inventario del investigador
+                inventario = self.cargar_inventario_investigador("Practica #1/InventarioGeneral.txt", cedula)
+                # Validar si el inventario está vacío
+                if inventario.isEmpty():
+                    with open(archivo, "w") as file:
+                        file.write("No hay equipos en el inventario.\n")
+                    print("El inventario está vacío. Archivo generado con un mensaje informativo.")
+                    return
+                # Escribir el inventario en el archivo
+                with open(archivo, "w") as file:
+                    current = inventario.first()
+                    while current:
+                        equipo = current.getData()
+                        file.write(f"{equipo['nombre_equipo']} {equipo['numero_placa']} "
+                                f"{equipo['fecha_compra']} {equipo['valor_compra']}\n")
+                        current = current.getNext()
+                print(f"Archivo de inventario generado: {archivo}")
+            except Exception as e:
+                print(f"Error al generar el archivo de inventario: {e}")

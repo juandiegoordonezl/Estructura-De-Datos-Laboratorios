@@ -3,7 +3,7 @@ from autenticacion import Autenticacion
 from investigador import Investigador
 from administrador import Administrador
 from fecha import *
-
+from solicitud import Solicitud
 def main():
     # Cargar datos iniciales
     empleados = GestorArchivos.cargar_usuarios("Practica #1/Empleados.txt", "Practica #1/Password.txt")
@@ -63,7 +63,7 @@ def main():
                     "Practica #1/InventarioGeneral.txt", investigador.getId
                 )
                 if inventario_asignado:
-                    print("Inventario asignado al investigador (sin nombre ni cédula):")
+                    print("Inventario asignado al investigador:")
                     current = inventario_asignado.first()
                     while current:
                         equipo = current.getData()
@@ -83,6 +83,20 @@ def main():
                 investigador.solicitar_adicionar_equipo(nombre, placa, fecha_compra, valor, cedula_administrador, empleados)
 
             elif opcion == "3":
+                inventario_asignado = Investigador.cargar_inventario_investigador(
+                    "Practica #1/InventarioGeneral.txt", investigador.getId
+                )
+                if inventario_asignado:
+                    print("Inventario asignado al investigador:")
+                    current = inventario_asignado.first()
+                    while current:
+                        equipo = current.getData()
+                        print(f"Equipo: {equipo['nombre_equipo']}, Placa: {equipo['numero_placa']}, "
+                            f"Fecha de Compra: {equipo['fecha_compra']}, Valor: ${equipo['valor_compra']:.2f}")
+                        current = current.getNext()
+                else:
+                    print("No se encontró inventario asignado o hubo un error.")
+                    
                 print("Solicitud para eliminar equipo:")
                 placa = input("Placa del equipo a eliminar: ")
                 justificacion = input("Justificación para eliminar el equipo: ")
@@ -103,18 +117,21 @@ def main():
 
             elif opcion == "5":
                 archivo = f"{investigador.getNombre}_{investigador.getId}.txt"
-                investigador.generar_archivo_inventario(archivo,investigador.getId)
-                print(f"Archivo de inventario generado: {archivo}")
+                investigador.generar_archivo_inventario(archivo, investigador.getId)
 
             elif opcion == "6":
-                archivo = f"Solicitudes{investigador.getNombre}_{investigador.getId}.txt"
+                archivo = f"Solicitudes_{investigador.getNombre}_{investigador.getId}.txt"
                 cedula_administrador = int(input("Ingrese la cédula del administrador: "))
-                investigador.generar_archivo_solicitudes(archivo,cedula_administrador,
+                investigador.generar_archivo_solicitudes(
+                    archivo,
+                    cedula_administrador,
                     "Solicitudes_agregar.txt",
                     "Solicitudes_eliminar.txt",
                     "Control_de_cambios.txt",
-                    empleados)
+                    empleados
+                )
                 print(f"Archivo de solicitudes generado: {archivo}")
+
 
             elif opcion == "7":
                 print("Cerrando sesión...")
@@ -167,32 +184,28 @@ def main():
                 
             elif opcion == "3":
                 print("Procesar una solicitud:")
-
-                # Mostrar solicitudes pendientes desde los archivos
+                
+                # Consultar y mostrar todas las solicitudes pendientes
                 administrador.consultar_solicitudes("Solicitudes_agregar.txt", "Solicitudes_eliminar.txt")
-
+                
                 tipo_solicitud = input("\n¿Desea procesar una solicitud para 'adicionar' o 'eliminar' equipos? (adicionar/eliminar): ").lower()
 
-                # Verificar el tipo de solicitud
-                if tipo_solicitud == "adicionar":
-                    archivo_solicitud = "Solicitudes_agregar.txt"
-                elif tipo_solicitud == "eliminar":
-                    archivo_solicitud = "Solicitudes_eliminar.txt"
-                else:
+                if tipo_solicitud not in ["adicionar", "eliminar"]:
                     print("Tipo de solicitud no válido. Operación cancelada.")
                     continue
 
+                archivo_solicitud = "Solicitudes_agregar.txt" if tipo_solicitud == "adicionar" else "Solicitudes_eliminar.txt"
+
                 try:
-                    # Leer el archivo correspondiente
+                    # Leer las solicitudes pendientes del archivo correspondiente
                     with open(archivo_solicitud, "r") as file:
                         solicitudes = [line.strip() for line in file if line.strip()]
-                
 
                     if not solicitudes:
                         print(f"No hay solicitudes pendientes para {tipo_solicitud}.")
                         continue
 
-                    # Mostrar las solicitudes con índices
+                    # Mostrar solicitudes con índices
                     print(f"\nSolicitudes para {tipo_solicitud}:")
                     for idx, solicitud in enumerate(solicitudes, start=1):
                         print(f"{idx}. {solicitud}")
@@ -203,142 +216,73 @@ def main():
                         print("Operación cancelada.")
                         continue
 
-                    # Validar el índice seleccionado
                     if indice < 1 or indice > len(solicitudes):
                         print("Índice no válido. Operación cancelada.")
                         continue
 
                     # Procesar la solicitud seleccionada
-                    solicitud = solicitudes[indice - 1]
-                    decision = input(f"¿Aprobar solicitud '{solicitud}'? (s/n): ").lower()
+                    solicitud_linea = solicitudes[indice - 1]
+                    print(f"Solicitud seleccionada: {solicitud_linea}")
+
+                    # Extraer información de la solicitud seleccionada
+                    datos_solicitud = solicitud_linea.split()
+                    investigador_id = int(datos_solicitud[1])
+
+                    # Buscar al investigador en la lista doble `empleados`
+                    investigador = None
+                    current = empleados.first()
+                    while current:
+                        empleado = current.getData()
+                        if empleado.getId == investigador_id:
+                            investigador = empleado
+                            break
+                        current = current.getNext()
+
+                    if not investigador:
+                        print(f"No se encontró al investigador con ID {investigador_id}.")
+                        continue
+
+                    # Crear un objeto Solicitud basado en la línea del archivo
+                    from solicitud import Solicitud
+                    solicitud = None
+                    if tipo_solicitud == "adicionar":
+                        solicitud = Solicitud(
+                            tipo="adicionar",
+                            nombre=datos_solicitud[2],
+                            placa=datos_solicitud[3],
+                            fecha_compra=Fecha(*map(int, datos_solicitud[4:7])),
+                            valor=float(datos_solicitud[7]),
+                            investigador=investigador
+                        )
+                    elif tipo_solicitud == "eliminar":
+                        solicitud = Solicitud(
+                            tipo="eliminar",
+                            placa=datos_solicitud[2],
+                            justificacion=" ".join(datos_solicitud[3:]),
+                            investigador=investigador
+                        )
+
+                    decision = input(f"¿Aprobar solicitud '{solicitud_linea}'? (s/n): ").lower()
                     aprobado = decision == "s"
+
+                    # Procesar la solicitud
+                    administrador.procesar_solicitud(
+                        solicitud,
+                        aprobado,
+                        "Solicitudes_agregar.txt",
+                        "Solicitudes_eliminar.txt",
+                        "Control_de_cambios.txt",
+                        "Practica #1/InventarioGeneral.txt"
+                    )
                 except FileNotFoundError:
                     print(f"Archivo {archivo_solicitud} no encontrado. Operación cancelada.")
                 except ValueError:
                     print("Índice no válido. Operación cancelada.")
                 except Exception as e:
                     print(f"Error al procesar la solicitud: {e}")
-                    # Eliminar la solicitud del archivo
-                    with open(archivo_solicitud, "w") as file:
-                        for idx, line in enumerate(solicitudes, start=1):
-                            if idx != indice:  # Escribir todas excepto la seleccionada
-                                file.write(line + "\n")
-
-                    if aprobado:
-                        solicitud_partes = solicitud.split()
-                        investigador_nombre, investigador_id = solicitud_partes[0], int(solicitud_partes[1])
-
-                        if tipo_solicitud == "adicionar":
-                            # Extraer información del equipo
-                            nombre_equipo = solicitud_partes[2]
-                            numero_placa = solicitud_partes[3]
-                            dia, mes, anio = map(int, solicitud_partes[4:7])
-                            fecha_compra = Fecha(dia, mes, anio)
-                            valor = float(solicitud_partes[7])
-
-                            # Agregar al inventario general
-                            with open("InventarioGeneral.txt", "a") as inventario_general:
-                                inventario_general.write(f"{investigador_nombre} {investigador_id} {nombre_equipo} {numero_placa} "
-                                                        f"{dia} {mes} {anio} {valor}\n")
-
-                            # Agregar al inventario del investigador
-                            current = empleados.first()
-                            investigador = None
-                            while current:
-                                empleado = current.getData()
-                                if empleado.getId == investigador_id:
-                                    investigador = empleado
-                                    break
-                                current = current.getNext()
-
-                            if investigador:
-                                investigador.inventario.addLast({
-                                    "nombre_equipo": nombre_equipo,
-                                    "numero_placa": numero_placa,
-                                    "fecha_compra": fecha_compra,
-                                    "valor_compra": valor
-                                })
-                                print(f"Equipo '{nombre_equipo}' (Placa: {numero_placa}) agregado al inventario del investigador {investigador_nombre}.")
-
-                                # Registrar en el control de cambios
-                                administrador.registrar_cambio(
-                                    tipo_cambio="Agregar",
-                                    placa=numero_placa,
-                                    investigador_id=investigador_id,
-                                    estado="Aprobado",
-                                    archivo_cambios="Control_de_cambios.txt"
-                                )
-                                print(f"Solicitud '{solicitud}' aprobada y registrada en el control de cambios.")
-                
-       
-                                
-                            elif tipo_solicitud == "eliminar":
-                                # Extraer información de la solicitud
-                                solicitud_partes = solicitud.split()
-                                investigador_nombre, investigador_id = solicitud_partes[0], int(solicitud_partes[1])
-                                numero_placa = solicitud_partes[2]
-
-                                # Buscar al investigador
-                                current = empleados.first()
-                                investigador = None
-                                while current:
-                                    empleado = current.getData()
-                                    if empleado.getId == investigador_id:
-                                        investigador = empleado
-                                        break
-                                    current = current.getNext()
-
-                                if not investigador:
-                                    print(f"No se encontró al investigador con ID {investigador_id}.")
-                                    continue
-
-                                # Buscar y eliminar el equipo del inventario del investigador
-                                current = investigador.inventario.first()
-                                encontrado = False
-                                while current:
-                                    equipo = current.getData()
-                                    if equipo["numero_placa"] == numero_placa:
-                                        investigador.inventario.remove(current)
-                                        print(f"Equipo con placa {numero_placa} eliminado del inventario del investigador {investigador_nombre}.")
-                                        encontrado = True
-                                        break
-                                    current = current.getNext()
-
-                                if not encontrado:
-                                    print(f"Equipo con placa {numero_placa} no encontrado en el inventario del investigador.")
-                                    continue
-
-                                # Eliminar el equipo del archivo InventarioGeneral.txt
-                            try:
-                                    with open("InventarioGeneral.txt", "r") as inventario_file:
-                                        lineas = inventario_file.readlines()
-
-                                    with open("InventarioGeneral.txt", "w") as inventario_file:
-                                        for linea in lineas:
-                                            if numero_placa not in linea:
-                                                inventario_file.write(linea)
-
-                                    print(f"Equipo con placa {numero_placa} eliminado del Inventario General.")
-                            except FileNotFoundError:
-                                print(f"Archivo {archivo_solicitud} no encontrado. Operación cancelada.")
-                            except ValueError:
-                                print("Índice no válido. Operación cancelada.")
-                            except Exception as e:
-                                print(f"Error al procesar la solicitud: {e}")
-
-                                # Registrar el cambio en el archivo Control_de_cambios.txt
-                                administrador.registrar_cambio(
-                                    tipo_cambio="Eliminar",
-                                    placa=numero_placa,
-                                    investigador_id=investigador_id,
-                                    estado="Aprobado",
-                                    archivo_cambios="Control_de_cambios.txt"
-                                )
-                                print(f"Solicitud '{solicitud}' aprobada y registrada en el control de cambios.")
 
 
 
-                
             elif opcion == "4":
                 administrador.agregar_usuario("Practica #1/Empleados.txt", "Practica #1/Password.txt")
             elif opcion == "5":
@@ -351,6 +295,9 @@ def main():
                 while node:
                     print(node.getData())
                     node = node.getNext()
+            elif opcion == "8":
+                administrador.imprimir_control_cambios()
+            
             elif opcion == "9":
                 archivo = "Control_de_cambios.txt"
                 administrador.generar_archivo_control_cambios(archivo)
@@ -378,7 +325,7 @@ def main():
 
 
             elif opcion == "11":
-                archivo = "InventarioGeneral.txt"
+                archivo = "Practica #1/InventarioGeneral.txt"
                 administrador.generar_archivo_inventario_general(archivo)
                 print(f"Archivo de inventario general generado: {archivo}")
 
