@@ -27,4 +27,4 @@ if __name__ == "__main__":
     sistema.atenderSiguiente()
     sistema.atenderSiguiente()
     
-   
+    #sistema.toFile()
