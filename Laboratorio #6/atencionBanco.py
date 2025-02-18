@@ -1,5 +1,5 @@
 import random
-from listas import DoubleList, SimpleList, SimpleNode, DoubleNode
+from listas import SimpleList, SimpleNode, DoubleNode
 from usuario import Usuario
 from fecha import Fecha
 from direccion import Direccion
@@ -27,4 +27,4 @@ if __name__ == "__main__":
     sistema.atenderSiguiente()
     sistema.atenderSiguiente()
     
-    #sistema.toFile()
+    sistema.toFile()
