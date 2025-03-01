@@ -33,6 +33,17 @@ for user in users:
 print("\nÁrbol Binario de Búsqueda:")
 bst.display()
 
+node_juan = bst.find(7)  # Juan tiene clave 7
+node_maria = bst.find(9)  # Maria tiene clave 9
+
+if node_juan:
+    parent_juan = bst.parent(node_juan)
+    print(f"\nPadre de Juan (7): {parent_juan.get_data() if parent_juan else 'No tiene padre (es la raíz)'}")
+
+if node_maria:
+    parent_maria = bst.parent(node_maria)
+    print(f"Padre de Maria (9): {parent_maria.get_data() if parent_maria else 'No encontrado'}")
+
 # Prueba de búsqueda
 print("\nBuscando clave 7 (Juan):", str(bst.find(7).get_data()) if bst.find(7) else "No encontrado")
 print("Buscando clave 4 (Pablo):", str(bst.find(4).get_data()) if bst.find(4) else "No encontrado")
@@ -48,3 +59,4 @@ print("Valor máximo:", bst.max_value().get_data() if bst.max_value() else "Árb
 
 # Prueba de recorrido inorder
 print("\nRecorrido Inorder:", [str(node) for node in bst.inorder_traversal()])
+
