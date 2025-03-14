@@ -3,6 +3,7 @@ class main:
     if __name__ == "__main__":
         archivo_csv = "Practica #2\Datos vias.csv"
         grafo = Grafo(archivo_csv)
+        print(grafo.ciudades)
         
         while True:
             print("\nOpciones:")
